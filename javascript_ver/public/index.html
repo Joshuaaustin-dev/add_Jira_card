@@ -2,50 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mock Inventory Portal</title>
+    <title>WebNX Intake Portal</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f5f7; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #0052cc; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
-        button:hover { background-color: #0065ff; }
-        #status { margin-top: 15px; font-weight: bold; text-align: center; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: white;
+            padding: 36px 32px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .card-header {
+            margin-bottom: 28px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #172b4d;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: #6b778c;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #172b4d;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #dfe1e6;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #172b4d;
+            transition: border-color 0.15s;
+            background: #fafbfc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0052cc;
+            background: white;
+        }
+
+        input::placeholder {
+            color: #b3bac5;
+        }
+
+        button {
+            width: 100%;
+            padding: 11px;
+            background: #0052cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.15s;
+        }
+
+        button:hover { background: #0065ff; }
+        button:disabled { background: #b3bac5; cursor: not-allowed; }
+
+        #status {
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 22px;
+        }
+
+        .status-loading { color: #ff991f; }
+        .status-success { color: #006644; }
+        .status-error   { color: #de350b; }
+
+        .jira-link {
+            color: #0052cc;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .jira-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>WebNX Mock Intake</h2>
+        <div class="card-header">
+            <h2>WebNX Intake</h2>
+            <p>Fill in the details below to create a Jira card.</p>
+        </div>
+
         <div class="form-group">
             <label for="itemName">Item Name</label>
-            <input type="text" id="itemName" placeholder="Build Name here">
+            <input type="text" id="itemName" placeholder="Build name">
         </div>
         <div class="form-group">
             <label for="build">Build Sheet</label>
-            <input type="text" id="build" placeholder="Build Sheet link here">
+            <input type="text" id="build" placeholder="Paste link here">
         </div>
         <div class="form-group">
             <label for="serial">Serial Sheet</label>
-            <input type="text" id="serial" placeholder="Serial Sheet link here">
+            <input type="text" id="serial" placeholder="Paste link here">
         </div>
-        <button id="syncBtn">Sync to Jira Board</button>
+
+        <button id="syncBtn">Sync to Jira</button>
         <div id="status"></div>
     </div>
 
     <script>
         document.getElementById('syncBtn').addEventListener('click', async () => {
             const statusDiv = document.getElementById('status');
-            const itemName = document.getElementById('itemName').value;
-            const buildNumber = document.getElementById('build').value;
-            const serialNumber = document.getElementById('serial').value;
+            const btn       = document.getElementById('syncBtn');
+            const itemName  = document.getElementById('itemName').value.trim();
+            const buildNumber  = document.getElementById('build').value.trim();
+            const serialNumber = document.getElementById('serial').value.trim();
 
-            statusDiv.style.color = 'orange';
+            if (!itemName) {
+                statusDiv.className = 'status-error';
+                statusDiv.innerText = 'Item name is required.';
+                return;
+            }
+
+            btn.disabled = true;
+            statusDiv.className = 'status-loading';
             statusDiv.innerText = 'Creating Jira card...';
 
             try {
-                const response = await fetch('http://localhost:5000/api/create-ticket', {
+                const response = await fetch('/api/create-ticket', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ itemName, buildNumber, serialNumber })
@@ -54,15 +164,17 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    statusDiv.style.color = 'green';
-                    statusDiv.innerText = `🎉 Success! Created card: ${result.key}`;
+                    statusDiv.className = 'status-success';
+                    statusDiv.innerHTML = `✓ Created: <a class="jira-link" href="https://${window.location.hostname}/browse/${result.key}" target="_blank">${result.key}</a>`;
                 } else {
-                    statusDiv.style.color = 'red';
-                    statusDiv.innerText = `Error context: ${JSON.stringify(result.error)}`;
+                    statusDiv.className = 'status-error';
+                    statusDiv.innerText = `Error: ${JSON.stringify(result.error)}`;
                 }
             } catch (err) {
-                statusDiv.style.color = 'red';
-                statusDiv.innerText = 'Failed to connect to backend server.';
+                statusDiv.className = 'status-error';
+                statusDiv.innerText = 'Could not reach the server. Try again.';
+            } finally {
+                btn.disabled = false;
             }
         });
     </script>
