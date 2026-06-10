@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Inventory Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f5f7; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #0052cc; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background-color: #0065ff; }
+        #status { margin-top: 15px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>WebNX Mock Intake</h2>
+        <div class="form-group">
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" placeholder="Build Name here">
+        </div>
+        <div class="form-group">
+            <label for="build">Build Sheet</label>
+            <input type="text" id="build" placeholder="Build Sheet link here">
+        </div>
+        <div class="form-group">
+            <label for="serial">Serial Sheet</label>
+            <input type="text" id="serial" placeholder="Serial Sheet link here">
+        </div>
+        <button id="syncBtn">Sync to Jira Board</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('syncBtn').addEventListener('click', async () => {
+            const statusDiv = document.getElementById('status');
+            const itemName = document.getElementById('itemName').value;
+            const buildNumber = document.getElementById('build').value;
+            const serialNumber = document.getElementById('serial').value;
+
+            statusDiv.style.color = 'orange';
+            statusDiv.innerText = 'Creating Jira card...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/create-ticket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ itemName, buildNumber, serialNumber })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.style.color = 'green';
+                    statusDiv.innerText = `🎉 Success! Created card: ${result.key}`;
+                } else {
+                    statusDiv.style.color = 'red';
+                    statusDiv.innerText = `Error context: ${JSON.stringify(result.error)}`;
+                }
+            } catch (err) {
+                statusDiv.style.color = 'red';
+                statusDiv.innerText = 'Failed to connect to backend server.';
+            }
+        });
+    </script>
+</body>
+</html>
