@@ -29,6 +29,11 @@ export default async function handler(req, res) {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
 
+    const requestedTitle = req.body?.title;
+    if (requestedTitle !== undefined && typeof requestedTitle !== 'string') {
+        return res.status(400).json({ success: false, message: 'Card title must be text.' });
+    }
+
     const items = req.body?.items;
     if (!Array.isArray(items) || items.length < 1 || items.length > MAX_ITEMS) {
         return res.status(400).json({ success: false, message: `Provide between 1 and ${MAX_ITEMS} items.` });
@@ -71,9 +76,14 @@ export default async function handler(req, res) {
     const PROJECT_KEY    = process.env.JIRA_PROJECT_KEY;
 
     const authHeader = Buffer.from(`${EMAIL}:${API_TOKEN}`).toString('base64');
-    const summary = normalizedItems.length === 1
-        ? normalizedItems[0].name
-        : `Intake (${normalizedItems.length} items)`;
+    const summary = (requestedTitle || '').trim()
+        || normalizedItems.map(item => item.name).join(' + ').slice(0, MAX_ITEM_NAME_LENGTH);
+    if (summary.length > MAX_ITEM_NAME_LENGTH) {
+        return res.status(400).json({
+            success: false,
+            message: `Card title must be no more than ${MAX_ITEM_NAME_LENGTH} characters.`
+        });
+    }
 
     const jiraPayload = {
         fields: {
