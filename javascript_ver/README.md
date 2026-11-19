@@ -44,6 +44,9 @@ After adding variables, go to **Deployments → Redeploy** so they take effect.
 ### 4. Share the URL
 Vercel gives you a URL like `https://webnx-intake.vercel.app` — share that with your team.
 
+## Creating a Jira card
+The intake form supports up to five items per Jira card. Each item needs a name; Build Sheet and Serial Sheet links are optional and must be HTTP or HTTPS URLs. A multi-item card is created with the item details and links in its description. Press **Enter** in the Serial Sheet field to add the next item, or **Ctrl/Command+Enter** to create the card.
+
 ## Getting a Jira API Token
 1. Go to https://id.atlassian.com/manage-profile/security/api-tokens
 2. Click **Create API token**

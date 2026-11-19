@@ -2,179 +2,401 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WebNX Intake Portal</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f0f2f5;
+            margin: 0;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 24px;
+            padding: 48px 20px;
+            background: #f4f6fa;
+            color: #172b4d;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         .card {
-            background: white;
-            padding: 36px 32px;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 420px;
+            max-width: 920px;
+            padding: 28px;
+            border: 1px solid #e7eaf0;
+            border-radius: 14px;
+            background: #fff;
+            box-shadow: 0 8px 28px rgba(23, 43, 77, 0.08);
         }
 
-        .card-header {
-            margin-bottom: 28px;
-        }
-
-        .card-header h2 {
-            font-size: 20px;
+        .eyebrow {
+            color: #0052cc;
+            font-size: 11px;
             font-weight: 700;
-            color: #172b4d;
+            letter-spacing: 0.1em;
         }
 
-        .card-header p {
-            font-size: 13px;
+        h1 {
+            margin: 8px 0 6px;
+            font-size: 25px;
+            line-height: 1.25;
+        }
+
+        .intro {
+            margin: 0 0 18px;
+            color: #5e6c84;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .items-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .item-card {
+            min-width: 0;
+            margin: 0;
+            padding: 12px 14px;
+            border: 1px solid #dfe3eb;
+            border-radius: 10px;
+        }
+
+        .item-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .item-heading {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .remove-item {
+            width: auto;
+            min-height: 28px;
+            margin: 0;
+            padding: 3px 8px;
+            border: 0;
+            background: transparent;
             color: #6b778c;
-            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .form-group {
-            margin-bottom: 18px;
+        .remove-item:hover { background: #f4f5f7; color: #ae2e24; }
+        .remove-item[hidden] { display: none; }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+            gap: 10px;
         }
 
         label {
             display: block;
-            font-size: 13px;
+            margin-bottom: 4px;
+            font-size: 12px;
             font-weight: 600;
-            color: #172b4d;
-            margin-bottom: 6px;
+        }
+
+        .optional {
+            color: #6b778c;
+            font-size: 11px;
+            font-weight: 400;
         }
 
         input {
             width: 100%;
-            padding: 9px 12px;
-            border: 1.5px solid #dfe1e6;
-            border-radius: 5px;
-            font-size: 14px;
+            min-height: 38px;
+            padding: 8px 10px;
+            border: 1px solid #cfd5df;
+            border-radius: 6px;
+            background: #fff;
             color: #172b4d;
-            transition: border-color 0.15s;
-            background: #fafbfc;
+            font: inherit;
+            font-size: 13px;
         }
 
-        input:focus {
-            outline: none;
-            border-color: #0052cc;
-            background: white;
-        }
+        input::placeholder { color: #8993a4; }
+        input:focus { outline: 2px solid #4c9aff; outline-offset: 1px; border-color: #0052cc; }
 
-        input::placeholder {
-            color: #b3bac5;
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         button {
-            width: 100%;
-            padding: 11px;
-            background: #0052cc;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
+            min-height: 40px;
+            padding: 9px 14px;
+            border: 0;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.15s;
         }
 
-        button:hover { background: #0065ff; }
-        button:disabled { background: #b3bac5; cursor: not-allowed; }
+        button:focus-visible { outline: 2px solid #4c9aff; outline-offset: 2px; }
+        button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+        .add-item {
+            background: #f0f5ff;
+            color: #0747a6;
+        }
+
+        .add-item:hover:not(:disabled) { background: #deebff; }
+
+        .submit-button {
+            min-width: 150px;
+            background: #0052cc;
+            color: #fff;
+        }
+
+        .submit-button:hover:not(:disabled) { background: #0747a6; }
+
+        .hint {
+            margin: 9px 0 0;
+            color: #6b778c;
+            font-size: 11px;
+        }
 
         #status {
+            min-height: 22px;
             margin-top: 16px;
             font-size: 14px;
-            font-weight: 500;
+            line-height: 1.5;
             text-align: center;
-            min-height: 22px;
         }
 
-        .status-loading { color: #ff991f; }
+        .status-loading { color: #974f0c; }
         .status-success { color: #006644; }
-        .status-error   { color: #de350b; }
+        .status-error { color: #ae2e24; }
 
         .jira-link {
             color: #0052cc;
-            text-decoration: none;
             font-weight: 700;
+            text-decoration: none;
         }
+
         .jira-link:hover { text-decoration: underline; }
+
+        @media (max-width: 540px) {
+            body { padding: 20px 12px; }
+            .card { padding: 24px 18px; }
+            .item-card { padding: 16px 12px; }
+            .item-grid { grid-template-columns: 1fr; gap: 12px; }
+            .actions { align-items: stretch; flex-direction: column; }
+            .actions button { width: 100%; }
+        }
     </style>
 </head>
 <body>
+    <main class="card">
+        <header>
+            <span class="eyebrow">JIRA INTAKE</span>
+            <h1>Create a Jira card</h1>
+            <p class="intro">Add up to five items to one card. Names are required; sheet links are optional.</p>
+        </header>
 
-    <div class="card">
-        <div class="card-header">
-            <h2>WebNX Intake</h2>
-            <p>Fill in the details below to create a Jira card.</p>
-        </div>
-
-        <div class="form-group">
-            <label for="itemName">Item Name</label>
-            <input type="text" id="itemName" placeholder="Build name">
-        </div>
-        <div class="form-group">
-            <label for="build">Build Sheet</label>
-            <input type="text" id="build" placeholder="Paste link here">
-        </div>
-        <div class="form-group">
-            <label for="serial">Serial Sheet</label>
-            <input type="text" id="serial" placeholder="Paste link here">
-        </div>
-
-        <button id="syncBtn">Sync to Jira</button>
-        <div id="status"></div>
-    </div>
+        <form id="intakeForm">
+            <div id="itemsList" class="items-list"></div>
+            <div class="actions">
+                <button id="addItemBtn" class="add-item" type="button">+ Add item <span id="itemCount">1/5</span></button>
+                <button id="syncBtn" class="submit-button" type="submit">Create Jira card</button>
+            </div>
+            <p class="hint">Press Enter in Serial Sheet to add the next item. Use Ctrl/Command+Enter to create the card.</p>
+            <div id="status" role="status" aria-live="polite"></div>
+        </form>
+    </main>
 
     <script>
-        document.getElementById('syncBtn').addEventListener('click', async () => {
-            const statusDiv = document.getElementById('status');
-            const btn       = document.getElementById('syncBtn');
-            const itemName  = document.getElementById('itemName').value.trim();
-            const buildNumber  = document.getElementById('build').value.trim();
-            const serialNumber = document.getElementById('serial').value.trim();
+        const MAX_ITEMS = 5;
+        const intakeForm = document.getElementById('intakeForm');
+        const itemsList = document.getElementById('itemsList');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemCount = document.getElementById('itemCount');
+        const syncBtn = document.getElementById('syncBtn');
+        const statusDiv = document.getElementById('status');
+        let nextItemId = 1;
 
-            if (!itemName) {
-                statusDiv.className = 'status-error';
-                statusDiv.innerText = 'Item name is required.';
-                return;
+        function createField(id, labelText, placeholder, type, required, fullWidth, optional = false) {
+            const group = document.createElement('div');
+            group.className = fullWidth ? 'form-group form-group--full' : 'form-group';
+
+            const label = document.createElement('label');
+            label.htmlFor = id;
+            label.textContent = labelText;
+            if (optional) {
+                const note = document.createElement('span');
+                note.className = 'optional';
+                note.textContent = ' (optional)';
+                label.append(note);
             }
 
-            btn.disabled = true;
+            const input = document.createElement('input');
+            input.id = id;
+            input.name = id;
+            input.type = type;
+            input.placeholder = placeholder;
+            input.required = required;
+            if (type === 'text') input.maxLength = 255;
+            if (type === 'url') input.maxLength = 2048;
+
+            group.append(label, input);
+            return { group, input };
+        }
+
+        function createItemCard() {
+            const itemId = nextItemId++;
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.setAttribute('role', 'group');
+
+            const headingRow = document.createElement('div');
+            headingRow.className = 'item-heading-row';
+            const heading = document.createElement('span');
+            heading.className = 'item-heading';
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-item';
+            removeBtn.type = 'button';
+            removeBtn.textContent = 'Remove';
+            headingRow.append(heading, removeBtn);
+
+            const grid = document.createElement('div');
+            grid.className = 'item-grid';
+
+            const name = createField(`item-name-${itemId}`, 'Item name', 'e.g. Build name', 'text', true, true);
+            name.input.className = 'item-name';
+            const build = createField(`build-sheet-${itemId}`, 'Build Sheet', 'https://...', 'url', false, false, true);
+            const serial = createField(`serial-sheet-${itemId}`, 'Serial Sheet', 'https://...', 'url', false, false, true);
+
+            grid.append(name.group, build.group, serial.group);
+            card.append(headingRow, grid);
+            return card;
+        }
+
+        function refreshItems() {
+            const cards = [...itemsList.querySelectorAll('.item-card')];
+            cards.forEach((card, index) => {
+                card.setAttribute('aria-label', `Item ${index + 1}`);
+                card.querySelector('.item-heading').textContent = `Item ${index + 1}`;
+                const removeBtn = card.querySelector('.remove-item');
+                removeBtn.hidden = cards.length === 1;
+                removeBtn.setAttribute('aria-label', `Remove item ${index + 1}`);
+            });
+            itemCount.textContent = `${cards.length}/${MAX_ITEMS}`;
+            addItemBtn.disabled = cards.length >= MAX_ITEMS;
+        }
+
+        itemsList.append(createItemCard());
+        refreshItems();
+        itemsList.querySelector('input').focus();
+
+        function addItem() {
+            if (itemsList.children.length >= MAX_ITEMS) return;
+            const card = createItemCard();
+            itemsList.append(card);
+            refreshItems();
+            card.querySelector('input').focus();
+        }
+
+        addItemBtn.addEventListener('click', addItem);
+
+        itemsList.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' || event.ctrlKey || event.metaKey
+                || !(event.target instanceof HTMLInputElement)) return;
+
+            event.preventDefault();
+            const fields = [...event.target.closest('.item-card').querySelectorAll('input')];
+            const fieldIndex = fields.indexOf(event.target);
+            if (fieldIndex < fields.length - 1) {
+                fields[fieldIndex + 1].focus();
+            } else if (itemsList.children.length < MAX_ITEMS) {
+                addItem();
+            } else {
+                syncBtn.focus();
+            }
+        });
+
+        itemsList.addEventListener('click', event => {
+            if (!(event.target instanceof Element)) return;
+            const removeBtn = event.target.closest('.remove-item');
+            if (!removeBtn || itemsList.children.length <= 1) return;
+            removeBtn.closest('.item-card').remove();
+            refreshItems();
+        });
+
+        intakeForm.addEventListener('keydown', event => {
+            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                intakeForm.requestSubmit();
+            }
+        });
+
+        intakeForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            itemsList.querySelectorAll('.item-name').forEach(input => {
+                input.setCustomValidity(input.value.trim() ? '' : 'Enter an item name.');
+            });
+            if (!intakeForm.reportValidity()) return;
+
+            const items = [...itemsList.querySelectorAll('.item-card')].map(card => {
+                const inputs = card.querySelectorAll('input');
+                return {
+                    name: inputs[0].value.trim(),
+                    buildSheet: inputs[1].value.trim(),
+                    serialSheet: inputs[2].value.trim()
+                };
+            });
+
+            syncBtn.disabled = true;
+            addItemBtn.disabled = true;
+            itemsList.querySelectorAll('input, .remove-item').forEach(control => {
+                control.disabled = true;
+            });
             statusDiv.className = 'status-loading';
-            statusDiv.innerText = 'Creating Jira card...';
+            statusDiv.textContent = 'Creating Jira card...';
 
             try {
                 const response = await fetch('/api/create-ticket', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ itemName, buildNumber, serialNumber })
+                    body: JSON.stringify({ items })
                 });
-
                 const result = await response.json();
 
-                if (result.success) {
-                    statusDiv.className = 'status-success';
-                    statusDiv.innerHTML = `✓ Created: <a class="jira-link" href="https://${window.location.hostname}/browse/${result.key}" target="_blank">${result.key}</a>`;
-                } else {
+                if (!response.ok || !result.success) {
                     statusDiv.className = 'status-error';
-                    statusDiv.innerText = `Error: ${JSON.stringify(result.error)}`;
+                    statusDiv.textContent = result.message
+                        || (result.error ? JSON.stringify(result.error) : `Could not create the Jira card (${response.status}).`);
+                    return;
                 }
-            } catch (err) {
+
+                statusDiv.className = 'status-success';
+                statusDiv.textContent = 'Jira card created: ';
+                const link = document.createElement('a');
+                link.className = 'jira-link';
+                link.href = result.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = result.key;
+                statusDiv.append(link);
+            } catch (error) {
                 statusDiv.className = 'status-error';
-                statusDiv.innerText = 'Could not reach the server. Try again.';
+                statusDiv.textContent = 'Could not reach the server. Try again.';
             } finally {
-                btn.disabled = false;
+                syncBtn.disabled = false;
+                itemsList.querySelectorAll('input, .remove-item').forEach(control => {
+                    control.disabled = false;
+                });
+                refreshItems();
             }
         });
     </script>
