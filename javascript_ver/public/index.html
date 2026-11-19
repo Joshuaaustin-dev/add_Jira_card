@@ -5,6 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WebNX Intake Portal</title>
     <style>
+        :root {
+            color-scheme: light;
+            --page-bg: #f4f6fa;
+            --surface: #fff;
+            --text: #172b4d;
+            --muted: #5e6c84;
+            --border: #dfe3eb;
+            --input-bg: #fff;
+            --input-border: #cfd5df;
+            --placeholder: #8993a4;
+            --accent: #0052cc;
+            --accent-hover: #0747a6;
+            --accent-fg: #fff;
+            --accent-soft: #f0f5ff;
+            --accent-soft-hover: #deebff;
+            --danger: #ae2e24;
+            --danger-soft: #f4f5f7;
+            --success: #006644;
+            --warning: #974f0c;
+            --focus: #4c9aff;
+            --shadow: 0 8px 28px rgba(23, 43, 77, 0.08);
+        }
+
+        body[data-theme="dark"] {
+            color-scheme: dark;
+            --page-bg: #111827;
+            --surface: #1f2937;
+            --text: #e5e7eb;
+            --muted: #a8b3c5;
+            --border: #3b4758;
+            --input-bg: #111827;
+            --input-border: #4b5563;
+            --placeholder: #9ca3af;
+            --accent: #8ab4ff;
+            --accent-hover: #b0ccff;
+            --accent-fg: #111827;
+            --accent-soft: #25344d;
+            --accent-soft-hover: #314563;
+            --danger: #fca5a5;
+            --danger-soft: #3b252b;
+            --success: #86efac;
+            --warning: #fbbf24;
+            --focus: #93c5fd;
+            --shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+        }
+
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
@@ -14,8 +60,8 @@
             align-items: flex-start;
             justify-content: center;
             padding: 48px 20px;
-            background: #f4f6fa;
-            color: #172b4d;
+            background: var(--page-bg);
+            color: var(--text);
             font-family: 'Segoe UI', Arial, sans-serif;
         }
 
@@ -23,14 +69,22 @@
             width: 100%;
             max-width: 920px;
             padding: 28px;
-            border: 1px solid #e7eaf0;
+            border: 1px solid var(--border);
             border-radius: 14px;
-            background: #fff;
-            box-shadow: 0 8px 28px rgba(23, 43, 77, 0.08);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
         }
 
         .eyebrow {
-            color: #0052cc;
+            color: var(--accent);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.1em;
@@ -43,11 +97,37 @@
         }
 
         .intro {
-            margin: 0 0 18px;
-            color: #5e6c84;
+            margin: 0;
+            color: var(--muted);
             font-size: 14px;
             line-height: 1.5;
         }
+
+        .theme-toggle,
+        .reset-title {
+            min-height: 32px;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .theme-toggle:hover,
+        .reset-title:hover { background: var(--accent-soft); }
+
+        .card-title-group { margin-bottom: 14px; }
+
+        .card-title-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .card-title-input { min-height: 42px; font-size: 14px; }
+        .title-hint { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
 
         .items-list {
             display: grid;
@@ -58,7 +138,7 @@
             min-width: 0;
             margin: 0;
             padding: 12px 14px;
-            border: 1px solid #dfe3eb;
+            border: 1px solid var(--border);
             border-radius: 10px;
         }
 
@@ -82,12 +162,12 @@
             padding: 3px 8px;
             border: 0;
             background: transparent;
-            color: #6b778c;
+            color: var(--muted);
             font-size: 12px;
             font-weight: 600;
         }
 
-        .remove-item:hover { background: #f4f5f7; color: #ae2e24; }
+        .remove-item:hover { background: var(--danger-soft); color: var(--danger); }
         .remove-item[hidden] { display: none; }
 
         .item-grid {
@@ -104,7 +184,7 @@
         }
 
         .optional {
-            color: #6b778c;
+            color: var(--muted);
             font-size: 11px;
             font-weight: 400;
         }
@@ -113,16 +193,16 @@
             width: 100%;
             min-height: 38px;
             padding: 8px 10px;
-            border: 1px solid #cfd5df;
+            border: 1px solid var(--input-border);
             border-radius: 6px;
-            background: #fff;
-            color: #172b4d;
+            background: var(--input-bg);
+            color: var(--text);
             font: inherit;
             font-size: 13px;
         }
 
-        input::placeholder { color: #8993a4; }
-        input:focus { outline: 2px solid #4c9aff; outline-offset: 1px; border-color: #0052cc; }
+        input::placeholder { color: var(--placeholder); }
+        input:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--accent); }
 
         .actions {
             display: flex;
@@ -143,27 +223,27 @@
             cursor: pointer;
         }
 
-        button:focus-visible { outline: 2px solid #4c9aff; outline-offset: 2px; }
+        button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
         button:disabled { cursor: not-allowed; opacity: 0.55; }
 
         .add-item {
-            background: #f0f5ff;
-            color: #0747a6;
+            background: var(--accent-soft);
+            color: var(--accent-hover);
         }
 
-        .add-item:hover:not(:disabled) { background: #deebff; }
+        .add-item:hover:not(:disabled) { background: var(--accent-soft-hover); }
 
         .submit-button {
             min-width: 150px;
-            background: #0052cc;
-            color: #fff;
+            background: var(--accent);
+            color: var(--accent-fg);
         }
 
-        .submit-button:hover:not(:disabled) { background: #0747a6; }
+        .submit-button:hover:not(:disabled) { background: var(--accent-hover); }
 
         .hint {
             margin: 9px 0 0;
-            color: #6b778c;
+            color: var(--muted);
             font-size: 11px;
         }
 
@@ -175,12 +255,12 @@
             text-align: center;
         }
 
-        .status-loading { color: #974f0c; }
-        .status-success { color: #006644; }
-        .status-error { color: #ae2e24; }
+        .status-loading { color: var(--warning); }
+        .status-success { color: var(--success); }
+        .status-error { color: var(--danger); }
 
         .jira-link {
-            color: #0052cc;
+            color: var(--accent);
             font-weight: 700;
             text-decoration: none;
         }
@@ -190,6 +270,8 @@
         @media (max-width: 540px) {
             body { padding: 20px 12px; }
             .card { padding: 24px 18px; }
+            .page-header { gap: 8px; }
+            .theme-toggle { flex-shrink: 0; }
             .item-card { padding: 16px 12px; }
             .item-grid { grid-template-columns: 1fr; gap: 12px; }
             .actions { align-items: stretch; flex-direction: column; }
@@ -199,13 +281,25 @@
 </head>
 <body>
     <main class="card">
-        <header>
-            <span class="eyebrow">JIRA INTAKE</span>
-            <h1>Create a Jira card</h1>
-            <p class="intro">Add up to five items to one card. Names are required; sheet links are optional.</p>
+        <header class="page-header">
+            <div>
+                <span class="eyebrow">JIRA INTAKE</span>
+                <h1>Create a Jira card</h1>
+                <p class="intro">Add up to five items to one card. Names are required; sheet links are optional.</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
         </header>
 
         <form id="intakeForm">
+            <div class="card-title-group">
+                <div class="card-title-label-row">
+                    <label for="cardTitle">Card title</label>
+                    <button id="resetTitleBtn" class="reset-title" type="button" hidden>Use item names</button>
+                </div>
+                <input id="cardTitle" class="card-title-input" type="text" maxlength="255" required
+                    placeholder="Enter item names below to suggest a title">
+                <p class="title-hint">Suggested from item names. Edit it to choose a different Jira title.</p>
+            </div>
             <div id="itemsList" class="items-list"></div>
             <div class="actions">
                 <button id="addItemBtn" class="add-item" type="button">+ Add item <span id="itemCount">1/5</span></button>
@@ -224,7 +318,38 @@
         const itemCount = document.getElementById('itemCount');
         const syncBtn = document.getElementById('syncBtn');
         const statusDiv = document.getElementById('status');
+        const cardTitle = document.getElementById('cardTitle');
+        const resetTitleBtn = document.getElementById('resetTitleBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const THEME_STORAGE_KEY = 'webnx-intake-theme';
+        let titleWasEdited = false;
         let nextItemId = 1;
+
+        function applyTheme(theme, save = false) {
+            document.body.dataset.theme = theme;
+            themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+            themeToggle.textContent = theme === 'dark' ? 'Dark mode: On' : 'Dark mode: Off';
+            if (save) {
+                try {
+                    localStorage.setItem(THEME_STORAGE_KEY, theme);
+                } catch (error) {
+                    console.error('Could not save the theme preference.', error);
+                }
+            }
+        }
+
+        let savedTheme;
+        try {
+            savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch (error) {
+            console.error('Could not load the saved theme preference.', error);
+        }
+        applyTheme(savedTheme === 'dark' || savedTheme === 'light'
+            ? savedTheme
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        themeToggle.addEventListener('click', () => {
+            applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark', true);
+        });
 
         function createField(id, labelText, placeholder, type, required, fullWidth, optional = false) {
             const group = document.createElement('div');
@@ -295,8 +420,22 @@
             addItemBtn.disabled = cards.length >= MAX_ITEMS;
         }
 
+        function suggestedTitle() {
+            return [...itemsList.querySelectorAll('.item-name')]
+                .map(input => input.value.trim())
+                .filter(Boolean)
+                .join(' + ')
+                .slice(0, 255);
+        }
+
+        function refreshTitle() {
+            if (!titleWasEdited) cardTitle.value = suggestedTitle();
+            resetTitleBtn.hidden = !titleWasEdited;
+        }
+
         itemsList.append(createItemCard());
         refreshItems();
+        refreshTitle();
         itemsList.querySelector('input').focus();
 
         function addItem() {
@@ -304,6 +443,7 @@
             const card = createItemCard();
             itemsList.append(card);
             refreshItems();
+            refreshTitle();
             card.querySelector('input').focus();
         }
 
@@ -331,6 +471,23 @@
             if (!removeBtn || itemsList.children.length <= 1) return;
             removeBtn.closest('.item-card').remove();
             refreshItems();
+            refreshTitle();
+        });
+
+        itemsList.addEventListener('input', event => {
+            if (event.target instanceof HTMLInputElement && event.target.matches('.item-name')) {
+                refreshTitle();
+            }
+        });
+
+        cardTitle.addEventListener('input', () => {
+            titleWasEdited = cardTitle.value !== suggestedTitle();
+            resetTitleBtn.hidden = !titleWasEdited;
+        });
+        resetTitleBtn.addEventListener('click', () => {
+            titleWasEdited = false;
+            refreshTitle();
+            cardTitle.focus();
         });
 
         intakeForm.addEventListener('keydown', event => {
@@ -358,6 +515,7 @@
 
             syncBtn.disabled = true;
             addItemBtn.disabled = true;
+            cardTitle.disabled = true;
             itemsList.querySelectorAll('input, .remove-item').forEach(control => {
                 control.disabled = true;
             });
@@ -368,7 +526,7 @@
                 const response = await fetch('/api/create-ticket', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items })
+                    body: JSON.stringify({ title: cardTitle.value.trim(), items })
                 });
                 const result = await response.json();
 
@@ -393,6 +551,7 @@
                 statusDiv.textContent = 'Could not reach the server. Try again.';
             } finally {
                 syncBtn.disabled = false;
+                cardTitle.disabled = false;
                 itemsList.querySelectorAll('input, .remove-item').forEach(control => {
                     control.disabled = false;
                 });
